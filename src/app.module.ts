@@ -1,39 +1,18 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose';
-
+import { Module } from '@nestjs/common'
+import { AppController } from './app.controller'
+import { AppService } from './app.service'
+import { databaseConfig } from './config/database.config'
+import { AccountModule } from './modules/account/account.module'
+import { AuthModule } from './modules/auth/auth.module'
+import { ConfigModule } from '@nestjs/config'
 @Module({
   imports: [
-    MongooseModule.forRootAsync({
-      useFactory: (): MongooseModuleOptions => {
-        try {
-          const mongoUri = process.env.MONGO_URI;
-
-          // Kiểm tra nếu mongoUri là undefined hoặc null
-          if (!mongoUri) {
-            throw new Error(
-              'MONGO_URI is not defined in the environment variables',
-            );
-          }
-
-          return { uri: mongoUri };
-        } catch (error: unknown) {
-          // Kiểm tra nếu error là instance của Error
-          if (error instanceof Error) {
-            console.error(
-              'Error occurred while setting up MongoDB connection:',
-              error.message,
-            );
-          } else {
-            console.error(
-              'An unknown error occurred while setting up MongoDB connection',
-            );
-          }
-          throw error; // Ném lại lỗi sau khi đã xử lý
-        }
-      },
+    databaseConfig,
+    ConfigModule.forRoot({
+      isGlobal: true, // Makes the ConfigModule available globally
     }),
+    AccountModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
