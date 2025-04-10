@@ -44,7 +44,9 @@ async function bootstrap() {
   // --- Kết thúc cấu hình Swagger ---
 
   const port = process.env.PORT || 3000
-  await app.listen(port)
-  console.log(`Application listening on port ${port}`) // Log ra port đang chạy là đủ
+  await app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+  })
+  console.log(`Swagger UI available at http://localhost:${port}/api/v1`)
 }
 void bootstrap()
